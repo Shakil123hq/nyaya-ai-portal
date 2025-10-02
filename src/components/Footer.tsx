@@ -85,19 +85,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* App Download Section */}
-        <div className="border-t border-white/10 pt-8 mb-8">
-          <h4 className="text-sm font-semibold mb-4">Download Mobile App</h4>
-          <div className="flex gap-4">
-            <Button variant="secondary" size="sm">
-              <span className="text-sm">📱 Google Play</span>
-            </Button>
-            <Button variant="secondary" size="sm">
-              <span className="text-sm">🍎 App Store</span>
-            </Button>
-          </div>
-        </div>
-
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-6 text-center">
           <p className="text-sm opacity-80">

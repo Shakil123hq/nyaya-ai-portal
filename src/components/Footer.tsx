@@ -33,12 +33,12 @@ const Footer = () => {
           {/* Brand Section */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-lg">
                 <span className="text-xl">⚖️</span>
               </div>
               <div>
-                <h3 className="font-bold">Nyaya AI</h3>
-                <p className="text-xs opacity-90">Justice for All</p>
+                <h3 className="font-bold text-accent">Nyaya AI</h3>
+                <p className="text-xs text-accent/90">Justice for All</p>
               </div>
             </div>
             <p className="text-sm opacity-80">

@@ -1,13 +1,13 @@
-import heroBanner from "@/assets/hero-banner.jpg";
+import supremeCourt from "@/assets/supreme-court-hero.jpg";
 
 const Hero = () => {
   return (
     <section className="relative h-[400px] overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroBanner})` }}
+        style={{ backgroundImage: `url(${supremeCourt})` }}
       >
-        <div className="absolute inset-0 bg-primary/80" />
+        <div className="absolute inset-0 bg-primary/85" />
       </div>
       
       <div className="relative container mx-auto h-full flex flex-col justify-center items-center text-center px-4">

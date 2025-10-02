@@ -16,12 +16,12 @@ const Header = () => {
         {/* Top Bar */}
         <div className="flex items-center justify-between py-3 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-lg">
               <span className="text-2xl">⚖️</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold">Nyaya AI</h1>
-              <p className="text-xs opacity-90">Smart Judicial System</p>
+              <h1 className="text-xl font-bold text-accent">Nyaya AI</h1>
+              <p className="text-xs text-accent/90">Smart Judicial System</p>
             </div>
           </div>
 

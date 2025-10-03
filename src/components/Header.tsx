@@ -35,7 +35,7 @@ const Header = () => {
         <div className="flex items-center justify-between py-3 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-2xl">⚖️</span>
+              <span className="text-2xl">⚖️</span> {/* Original Emoji Logo */}
             </div>
             <div>
               <h1 className="text-xl font-bold text-accent">Nyaya AI</h1>
@@ -67,10 +67,7 @@ const Header = () => {
             </Select>
 
             {/* Login Button */}
-            <Button variant="secondary" size="sm" className="gap-2" onClick={() => {
-              console.log("Header Login button clicked!");
-              navigate('/login');
-            }}>
+            <Button variant="secondary" size="sm" className="gap-2" onClick={() => navigate('/login')}>
               <LogIn className="w-4 h-4" />
               Login
             </Button>

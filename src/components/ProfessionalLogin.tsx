@@ -87,7 +87,7 @@ const ProfessionalLogin: React.FC = () => {
       if (professionalRole === "advocate") {
         navigate("/advocate-dashboard");
       } else if (professionalRole === "police") {
-        navigate("/professional-dashboard"); // This currently points to PoliceDashboardPage
+        navigate("/police-dashboard");
       } else if (professionalRole === "judge") {
         navigate("/judge-dashboard"); // Redirect to the dedicated Judge dashboard
       } else if (professionalRole === "system") {

@@ -19,6 +19,7 @@ import AdvocateDashboardPage from "./pages/AdvocateDashboardPage";
 import JudgeDashboardPage from "./pages/JudgeDashboardPage";
 import SystemDashboardPage from "./pages/SystemDashboardPage";
 import NotFound from "./pages/NotFound";
+import Header from "./components/Header";
 
 const queryClient = new QueryClient();
 
@@ -33,14 +34,14 @@ const App = () => (
           <Route path="/file-complaint" element={<ComplaintPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/citizen-dashboard" element={<CitizenDashboardPage />} />
-          <Route path="/professional-dashboard" element={<PoliceDashboardPage />} />
+          <Route path="/police-dashboard" element={<PoliceDashboardPage />} />
           <Route path="/file-new-complaint" element={<ComplaintEfilingPage />} />
           <Route path="/file-new-complaint/narrative" element={<ComplaintEfilingPage2 />} />
           <Route path="/file-new-complaint/evidence" element={<ComplaintEfilingPage3 />} />
           <Route path="/file-new-complaint/review-submit" element={<ComplaintEfilingPage4 />} />
           <Route path="/citizen-case-tracking" element={<CitizenCaseTrackingPage />} />
           <Route path="/police/complaint-review/:id" element={<PoliceComplaintReviewPage />} />
-          <Route path="w/advocate-dashboard" element={<AdvocateDashboardPage />} />
+          <Route path="/advocate-dashboard" element={<AdvocateDashboardPage />} />
           <Route path="/judge-dashboard" element={<JudgeDashboardPage />} />
           <Route path="/system-dashboard" element={<SystemDashboardPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

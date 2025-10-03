@@ -13,7 +13,7 @@ const PoliceDashboardPage: React.FC = () => {
     const userToken = localStorage.getItem('userToken');
     const userRole = localStorage.getItem('userRole');
 
-    if (!userToken || userRole !== 'professional') {
+    if (!userToken || userRole !== 'police') {
       navigate('/login');
     }
   }, [navigate]);

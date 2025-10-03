@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import justiceScales from '@/assets/justice-scales.jpg';
+import justiceScales from '@/assets/hero2.jpg';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AuthGateway from "@/components/AuthGateway";

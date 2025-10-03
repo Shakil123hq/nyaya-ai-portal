@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 import { Gavel, Brain, ShieldCheck } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
+import heroImage from '../assets/hero3.jpg';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const Hero = () => {
   return (
     <section 
       className="relative bg-cover bg-center min-h-screen flex flex-col justify-center items-center text-white px-4 py-16"
-      style={{ backgroundImage: `url('/src/assets/hero3.jpg')` }} // <<< IMPORTANT: Replace this path with your actual legal-themed image path.
+      style={{ backgroundImage: `url(${heroImage})` }} // <<< IMPORTANT: Replace this path with your actual legal-themed image path.
     >
       <div className="absolute inset-0 bg-[#2C3E50]/90" /> {/* Deep Navy Overlay */}
 

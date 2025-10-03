@@ -1,13 +1,16 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
+  const navigate = useNavigate();
   const footerLinks = {
     "Quick Links": [
       "About Us",
       "Newsletter",
       "Sitemap",
       "Helpdesk",
-      "Accessibility"
+      "Accessibility",
+      "Login"
     ],
     "Legal": [
       "Terms & Conditions",
@@ -56,6 +59,14 @@ const Footer = () => {
                     <Button
                       variant="link"
                       className="p-0 h-auto text-primary-foreground/80 hover:text-accent font-normal"
+                      onClick={() => {
+                        if (link === "Case Status") {
+                          navigate('/citizen-case-tracking');
+                        } else if (link === "Login") {
+                          navigate('/login');
+                        }
+                        // Add more conditions for other links if they need specific navigation
+                      }}
                     >
                       {link}
                     </Button>

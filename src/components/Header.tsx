@@ -8,8 +8,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  // Dummy function to simulate authentication check
+  const isCitizenAuthenticated = () => {
+    const userToken = localStorage.getItem('userToken');
+    const userRole = localStorage.getItem('userRole');
+    return userToken && userRole === 'citizen';
+  };
+
+  const handleFileComplaintClick = () => {
+    if (isCitizenAuthenticated()) {
+      navigate('/citizen-dashboard');
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <header className="bg-primary text-primary-foreground shadow-lg sticky top-0 z-50">
       <div className="container mx-auto">
@@ -49,7 +67,10 @@ const Header = () => {
             </Select>
 
             {/* Login Button */}
-            <Button variant="secondary" size="sm" className="gap-2">
+            <Button variant="secondary" size="sm" className="gap-2" onClick={() => {
+              console.log("Header Login button clicked!");
+              navigate('/login');
+            }}>
               <LogIn className="w-4 h-4" />
               Login
             </Button>
@@ -58,10 +79,14 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="flex items-center justify-center gap-1 py-2">
-          <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent">
+          <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent" onClick={() => navigate('/')}>
             Home
           </Button>
-          <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent">
+          <Button
+            variant="ghost"
+            className="text-primary-foreground hover:bg-white/10 hover:text-accent"
+            onClick={handleFileComplaintClick}
+          >
             File Complaint/FIR
           </Button>
           <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent">

@@ -4,99 +4,127 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import PasswordStrengthIndicator from "./PasswordStrengthIndicator";
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 type ProfessionalRole = "advocate" | "judge" | "police" | "system" | null;
 
 const ProfessionalLogin: React.FC = () => {
   const [professionalRole, setProfessionalRole] = useState<ProfessionalRole>(null);
-  const [id, setId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [professionalRoleError, setProfessionalRoleError] = useState<string | null>(null);
-  const [idError, setIdError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const getLabelForId = (role: ProfessionalRole) => {
-    switch (role) {
-      case "advocate":
-        return "Bar Council ID / Enrollment Number";
-      case "judge":
-        return "Judicial Service ID";
-      case "police":
-        return "Unique Badge/Service ID";
-      case "system":
-        return "Government ID / Employee ID";
-      default:
-        return "ID";
-    }
-  };
-
-  const getPlaceholderForId = (role: ProfessionalRole) => {
-    switch (role) {
-      case "advocate":
-        return "Enter your Bar Council ID or Enrollment Number";
-      case "judge":
-        return "Enter your Judicial Service ID";
-      case "police":
-        return "Enter your Unique Badge/Service ID";
-      case "system":
-        return "Enter your Government ID or Employee ID";
-      default:
-        return "Enter your ID";
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfessionalRoleError(null);
-    setIdError(null);
+    setEmailError(null);
     setPasswordError(null);
-    setLoginError(null);
+    setLoading(true);
 
-    let isValid = true;
-
+    // Validation
     if (!professionalRole) {
       setProfessionalRoleError("Please select your professional role.");
-      isValid = false;
+      setLoading(false);
+      return;
     }
 
-    if (!id) {
-      setIdError("ID is required.");
-      isValid = false;
+    if (!email) {
+      setEmailError("Email is required.");
+      setLoading(false);
+      return;
     }
 
     if (!password) {
       setPasswordError("Password is required.");
-      isValid = false;
-    }
-
-    if (!isValid) {
+      setLoading(false);
       return;
     }
 
-    // Simulate API call
-    if (id === "testprof" && password === "password123") {
-      localStorage.setItem('userToken', 'mock-professional-token');
-      localStorage.setItem('userRole', professionalRole as string);
+    try {
+      // Sign in with Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        toast({
+          title: "Login failed",
+          description: authError.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!authData.user) {
+        toast({
+          title: "Login failed",
+          description: "Unable to authenticate",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check if user has the selected professional role
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authData.user.id)
+        .eq('role', professionalRole)
+        .maybeSingle();
+
+      if (roleError) {
+        toast({
+          title: "Error",
+          description: "Failed to verify your role",
+          variant: "destructive",
+        });
+        await supabase.auth.signOut();
+        return;
+      }
+
+      if (!roleData) {
+        toast({
+          title: "Access denied",
+          description: `You don't have ${professionalRole} access. Please contact an administrator.`,
+          variant: "destructive",
+        });
+        await supabase.auth.signOut();
+        return;
+      }
+
+      // Navigate based on role
+      toast({
+        title: "Login successful",
+        description: `Welcome ${professionalRole}!`,
+      });
 
       if (professionalRole === "advocate") {
         navigate("/advocate-dashboard");
       } else if (professionalRole === "police") {
         navigate("/police-dashboard");
       } else if (professionalRole === "judge") {
-        navigate("/judge-dashboard"); // Redirect to the dedicated Judge dashboard
+        navigate("/judge-dashboard");
       } else if (professionalRole === "system") {
-        navigate("/system-dashboard"); // Redirect to the dedicated System dashboard
-      } else {
-        navigate("/professional-dashboard"); // Fallback
+        navigate("/system-dashboard");
       }
-    } else {
-      setLoginError("Invalid ID or password.");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,9 +134,14 @@ const ProfessionalLogin: React.FC = () => {
         <Label htmlFor="professionalRole">I am a...</Label>
         <Select onValueChange={(value: ProfessionalRole) => {
           setProfessionalRole(value);
-          setProfessionalRoleError(null); // Clear error when role changes
+          setProfessionalRoleError(null);
         }}>
-          <SelectTrigger id="professionalRole" aria-invalid={professionalRoleError ? "true" : "false"} aria-describedby="professional-role-error">
+          <SelectTrigger 
+            id="professionalRole" 
+            disabled={loading}
+            aria-invalid={professionalRoleError ? "true" : "false"} 
+            aria-describedby="professional-role-error"
+          >
             <SelectValue placeholder="Select your professional role" />
           </SelectTrigger>
           <SelectContent>
@@ -124,18 +157,19 @@ const ProfessionalLogin: React.FC = () => {
       {professionalRole && (
         <>
           <div className="grid gap-2">
-            <Label htmlFor="professionalId">{getLabelForId(professionalRole)}</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="professionalId"
-              type="text"
-              placeholder={getPlaceholderForId(professionalRole)}
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              aria-invalid={idError ? "true" : "false"}
-              aria-describedby="professional-id-error"
+              disabled={loading}
+              aria-invalid={emailError ? "true" : "false"}
+              aria-describedby="email-error"
             />
-            {idError && <p id="professional-id-error" className="text-sm text-red-500" role="alert">{idError}</p>}
+            {emailError && <p id="email-error" className="text-sm text-red-500" role="alert">{emailError}</p>}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
@@ -146,10 +180,10 @@ const ProfessionalLogin: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={loading}
               aria-invalid={passwordError ? "true" : "false"}
               aria-describedby="password-error"
             />
-            <PasswordStrengthIndicator password={password} />
             {passwordError && <p id="password-error" className="text-sm text-red-500" role="alert">{passwordError}</p>}
           </div>
           <div className="flex items-center space-x-2">
@@ -157,6 +191,7 @@ const ProfessionalLogin: React.FC = () => {
               id="keepLoggedIn"
               checked={keepLoggedIn}
               onCheckedChange={(checked: boolean) => setKeepLoggedIn(checked)}
+              disabled={loading}
             />
             <label
               htmlFor="keepLoggedIn"
@@ -165,13 +200,9 @@ const ProfessionalLogin: React.FC = () => {
               Keep Me Logged In (For secure personal devices only)
             </label>
           </div>
-          {loginError && <p className="text-sm text-red-500 text-center" role="alert">{loginError}</p>}
-          <Button type="submit" className="w-full">Login</Button>
-          <div className="text-center text-sm">
-            <a href="/forgot-password-professional" className="text-muted-foreground hover:underline">
-              Forgot Password?
-            </a>
-          </div>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Signing in..." : "Login"}
+          </Button>
         </>
       )}
     </form>

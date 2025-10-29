@@ -2,70 +2,91 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// Removed Link import as it's no longer directly navigating, but triggering a state change
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface CitizenLoginProps {
   onRegisterClick: () => void;
 }
 
 const CitizenLogin: React.FC<CitizenLoginProps> = ({ onRegisterClick }) => {
-  const [mobileOrEmail, setMobileOrEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [mobileOrEmailError, setMobileOrEmailError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMobileOrEmailError(null);
+    setEmailError(null);
     setPasswordError(null);
-    setLoginError(null);
+    setLoading(true);
 
-    let isValid = true;
-
-    if (!mobileOrEmail) {
-      setMobileOrEmailError("Mobile number or email is required.");
-      isValid = false;
+    // Validation
+    if (!email) {
+      setEmailError("Email is required.");
+      setLoading(false);
+      return;
     }
 
     if (!password) {
       setPasswordError("Password is required.");
-      isValid = false;
-    }
-
-    if (!isValid) {
+      setLoading(false);
       return;
     }
 
-    console.log("Citizen Login Attempt:", { mobileOrEmail, password });
-    // Simulate API call
-    if (mobileOrEmail === "test@example.com" && password === "password123") {
-      console.log("Login successful!");
-      localStorage.setItem('userToken', 'mock-citizen-token');
-      localStorage.setItem('userRole', 'citizen');
-      navigate("/citizen-dashboard"); // Redirect to dashboard
-    } else {
-      setLoginError("Invalid mobile number/email or password.");
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: "Login failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Login successful",
+          description: "Welcome back!",
+        });
+        navigate("/citizen-dashboard");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-4 mt-6">
       <div className="grid gap-2">
-        <Label htmlFor="mobileOrEmail">Mobile Number or Email</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
-          id="mobileOrEmail"
-          type="text"
-          placeholder="Enter your mobile number or email"
-          value={mobileOrEmail}
-          onChange={(e) => setMobileOrEmail(e.target.value)}
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
-          aria-invalid={mobileOrEmailError ? "true" : "false"}
-          aria-describedby="mobile-or-email-error"
+          disabled={loading}
+          aria-invalid={emailError ? "true" : "false"}
+          aria-describedby="email-error"
         />
-        {mobileOrEmailError && <p id="mobile-or-email-error" className="text-sm text-red-500" role="alert">{mobileOrEmailError}</p>}
+        {emailError && <p id="email-error" className="text-sm text-red-500" role="alert">{emailError}</p>}
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Password</Label>
@@ -76,24 +97,24 @@ const CitizenLogin: React.FC<CitizenLoginProps> = ({ onRegisterClick }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          disabled={loading}
           aria-invalid={passwordError ? "true" : "false"}
           aria-describedby="password-error"
         />
         {passwordError && <p id="password-error" className="text-sm text-red-500" role="alert">{passwordError}</p>}
       </div>
-      {loginError && <p className="text-sm text-red-500 text-center" role="alert">{loginError}</p>}
-      <Button type="submit" className="w-full">Login</Button>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? "Signing in..." : "Login"}
+      </Button>
       <div className="flex justify-between text-sm">
         <button
           type="button"
           onClick={onRegisterClick}
           className="text-primary hover:underline"
+          disabled={loading}
         >
           Register Here
         </button>
-        <a href="/forgot-password-citizen" className="text-muted-foreground hover:underline">
-          Forgot Password?
-        </a>
       </div>
     </form>
   );

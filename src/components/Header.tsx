@@ -10,7 +10,11 @@ import {
 } from "@/components/ui/select";
 import { useNavigate } from 'react-router-dom';
 
-const Header = () => {
+interface HeaderProps {
+  className?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ className = "" }) => {
   const navigate = useNavigate();
 
   // Dummy function to simulate authentication check
@@ -29,7 +33,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-primary text-primary-foreground shadow-lg sticky top-0 z-50">
+    <header className={`bg-primary text-primary-foreground shadow-lg sticky top-0 z-50 ${className}`}>
       <div className="container mx-auto">
         {/* Top Bar */}
         <div className="flex items-center justify-between py-3 border-b border-white/10">

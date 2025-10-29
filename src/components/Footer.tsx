@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 
-const Footer = () => {
+interface FooterProps {
+  className?: string;
+}
+
+const Footer: React.FC<FooterProps> = ({ className = "" }) => {
   const navigate = useNavigate();
   const footerLinks = {
     "Quick Links": [
@@ -29,7 +33,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-primary text-primary-foreground">
+    <footer className={`bg-primary text-primary-foreground ${className}`}>
       <div className="container mx-auto px-4 py-12">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-4 gap-8 mb-8">

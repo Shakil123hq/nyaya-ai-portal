@@ -27,30 +27,30 @@ const Hero = () => {
 
   return (
     <section 
-      className="relative bg-cover bg-center min-h-screen flex flex-col justify-center items-center text-white px-4 py-16"
-      style={{ backgroundImage: `url(${heroImage})` }} // <<< IMPORTANT: Replace this path with your actual legal-themed image path.
+      className="relative bg-cover bg-center min-h-screen flex flex-col justify-center items-center text-white px-4 py-16 overflow-hidden"
+      style={{ backgroundImage: `url(${heroImage})` }}
     >
-      <div className="absolute inset-0 bg-[#2C3E50]/90" /> {/* Deep Navy Overlay */}
+      <div className="absolute inset-0 bg-[#2C3E50]/90 animate-fade-in" />
 
       <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white">
+        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white animate-fade-in opacity-0 [animation-delay:200ms] [animation-fill-mode:forwards]">
           Welcome to Nyaya AI
         </h1>
-        <p className="text-lg md:text-xl text-white/90 mb-8">
+        <p className="text-lg md:text-xl text-white/90 mb-8 animate-fade-in opacity-0 [animation-delay:400ms] [animation-fill-mode:forwards]">
           Your trusted partner for efficient case management, intelligent legal research, and transparent judicial proceedings.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 mb-16">
+        <div className="flex flex-col sm:flex-row gap-4 mb-16 animate-fade-in opacity-0 [animation-delay:600ms] [animation-fill-mode:forwards]">
           <Button
             onClick={() => navigate('/login')}
-            className="bg-[#FFC300] text-[#2C3E50] hover:bg-[#FFC300]/90 font-semibold px-8 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+            className="bg-[#FFC300] text-[#2C3E50] hover:bg-[#FFC300]/90 font-semibold px-8 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-2xl active:scale-95"
           >
             Access My Dashboard
           </Button>
           <Button
             onClick={() => navigate('/about')}
             variant="outline"
-            className="bg-white text-[#2C3E50] border-2 border-[#2C3E50] hover:bg-gray-100 font-semibold px-8 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+            className="bg-white text-[#2C3E50] border-2 border-[#2C3E50] hover:bg-gray-100 font-semibold px-8 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-2xl active:scale-95"
           >
             Learn More
           </Button>
@@ -58,11 +58,15 @@ const Hero = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
           {featureCards.map((card, index) => (
-            <Card key={index} className="bg-[#2C3E50] text-white p-6 rounded-lg shadow-xl border border-gray-700">
+            <Card 
+              key={index} 
+              className="bg-[#2C3E50] text-white p-6 rounded-lg shadow-xl border border-gray-700 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-[#FFC300] animate-fade-in opacity-0 [animation-fill-mode:forwards] cursor-pointer group"
+              style={{ animationDelay: `${800 + index * 150}ms` }}
+            >
               <CardContent className="p-0 flex flex-col items-center text-center">
-                <card.icon className="h-10 w-10 text-[#FFC300] mb-4" />
-                <h4 className="text-xl font-semibold mb-2">{card.title}</h4>
-                <p className="text-sm text-white/80">{card.description}</p>
+                <card.icon className="h-10 w-10 text-[#FFC300] mb-4 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                <h4 className="text-xl font-semibold mb-2 group-hover:text-[#FFC300] transition-colors duration-300">{card.title}</h4>
+                <p className="text-sm text-white/80 group-hover:text-white transition-colors duration-300">{card.description}</p>
               </CardContent>
             </Card>
           ))}

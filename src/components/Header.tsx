@@ -33,33 +33,33 @@ const Header: React.FC<HeaderProps> = ({ className = "" }) => {
   };
 
   return (
-    <header className={`bg-primary text-primary-foreground shadow-lg sticky top-0 z-50 ${className}`}>
+    <header className={`bg-primary text-primary-foreground shadow-lg sticky top-0 z-50 transition-all duration-300 ${className}`}>
       <div className="container mx-auto">
         {/* Top Bar */}
         <div className="flex items-center justify-between py-3 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-2xl">⚖️</span> {/* Original Emoji Logo */}
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+              <span className="text-2xl">⚖️</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-accent">Nyaya AI</h1>
+              <h1 className="text-xl font-bold text-accent transition-transform duration-300 group-hover:scale-105">Nyaya AI</h1>
               <p className="text-xs text-accent/90">Smart Judicial System</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             {/* Search Bar */}
-            <div className="relative hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <div className="relative hidden md:block group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-transform duration-300 group-hover:scale-110" />
               <Input
                 placeholder="Search cases, acts..."
-                className="pl-10 w-64 bg-white/10 border-white/20 text-primary-foreground placeholder:text-white/60"
+                className="pl-10 w-64 bg-white/10 border-white/20 text-primary-foreground placeholder:text-white/60 focus:w-72 focus:bg-white/20 transition-all duration-300"
               />
             </div>
 
             {/* Language Switcher */}
             <Select defaultValue="en">
-              <SelectTrigger className="w-32 bg-white/10 border-white/20 text-primary-foreground">
+              <SelectTrigger className="w-32 bg-white/10 border-white/20 text-primary-foreground hover:bg-white/20 transition-all duration-300">
                 <Globe className="w-4 h-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
@@ -71,7 +71,12 @@ const Header: React.FC<HeaderProps> = ({ className = "" }) => {
             </Select>
 
             {/* Login Button */}
-            <Button variant="secondary" size="sm" className="gap-2" onClick={() => navigate('/login')}>
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              className="gap-2 transition-all duration-300 hover:scale-110 hover:shadow-lg active:scale-95" 
+              onClick={() => navigate('/login')}
+            >
               <LogIn className="w-4 h-4" />
               Login
             </Button>
@@ -80,26 +85,42 @@ const Header: React.FC<HeaderProps> = ({ className = "" }) => {
 
         {/* Navigation */}
         <nav className="flex items-center justify-center gap-1 py-2">
-          <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent" onClick={() => navigate('/')}>
+          <Button 
+            variant="ghost" 
+            className="text-primary-foreground hover:bg-white/10 hover:text-accent transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300" 
+            onClick={() => navigate('/')}
+          >
             Home
           </Button>
           <Button
             variant="ghost"
-            className="text-primary-foreground hover:bg-white/10 hover:text-accent"
+            className="text-primary-foreground hover:bg-white/10 hover:text-accent transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
             onClick={handleFileComplaintClick}
           >
             File Complaint/FIR
           </Button>
-          <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent">
+          <Button 
+            variant="ghost" 
+            className="text-primary-foreground hover:bg-white/10 hover:text-accent transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
+          >
             Track Case
           </Button>
-          <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent">
+          <Button 
+            variant="ghost" 
+            className="text-primary-foreground hover:bg-white/10 hover:text-accent transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
+          >
             Legal Resources
           </Button>
-          <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent">
+          <Button 
+            variant="ghost" 
+            className="text-primary-foreground hover:bg-white/10 hover:text-accent transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
+          >
             Analytics
           </Button>
-          <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-accent">
+          <Button 
+            variant="ghost" 
+            className="text-primary-foreground hover:bg-white/10 hover:text-accent transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
+          >
             About Us
           </Button>
         </nav>

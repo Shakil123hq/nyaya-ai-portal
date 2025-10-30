@@ -1,7 +1,30 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Shield, Scale, Gavel, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const UserRoles = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const element = document.getElementById('user-roles');
+    if (element) observer.observe(element);
+
+    return () => {
+      if (element) observer.unobserve(element);
+    };
+  }, []);
+
   const roles = [
     {
       title: "Citizens",
@@ -36,8 +59,8 @@ const UserRoles = () => {
   ];
 
   return (
-    <section className="container mx-auto py-12 px-4">
-      <h3 className="text-3xl font-bold text-foreground mb-8 text-center">
+    <section id="user-roles" className="container mx-auto py-12 px-4">
+      <h3 className={`text-3xl font-bold text-foreground mb-8 text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         Services for Every Stakeholder
       </h3>
       
@@ -45,20 +68,24 @@ const UserRoles = () => {
         {roles.map((role, idx) => (
           <Card 
             key={idx} 
-            className="border-border hover:border-accent transition-all hover:shadow-lg group"
+            className={`border-border hover:border-accent transition-all duration-500 hover:shadow-xl hover:scale-105 group cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            style={{ transitionDelay: `${idx * 100}ms` }}
           >
             <CardHeader>
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-3 group-hover:bg-accent/20 transition-colors">
-                <role.icon className="w-6 h-6 text-accent" />
+              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-3 group-hover:bg-accent/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+                <role.icon className="w-6 h-6 text-accent transition-transform duration-300 group-hover:scale-110" />
               </div>
-              <CardTitle className="text-xl text-foreground">{role.title}</CardTitle>
+              <CardTitle className="text-xl text-foreground group-hover:text-accent transition-colors duration-300">{role.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground mb-4">{role.description}</p>
+              <p className="text-muted-foreground mb-4 group-hover:text-foreground transition-colors duration-300">{role.description}</p>
               <ul className="space-y-2">
                 {role.features.map((feature, fIdx) => (
-                  <li key={fIdx} className="flex items-start gap-2 text-sm">
-                    <span className="text-accent mt-1">•</span>
+                  <li 
+                    key={fIdx} 
+                    className="flex items-start gap-2 text-sm transition-all duration-300 hover:translate-x-2"
+                  >
+                    <span className="text-accent mt-1 transition-transform duration-300 group-hover:scale-150">•</span>
                     <span className="text-foreground">{feature}</span>
                   </li>
                 ))}

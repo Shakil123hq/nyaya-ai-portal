@@ -14,18 +14,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const JudgeDashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('Daily Docket'); // State to manage active tab
-  const [currentDate, setCurrentDate] = useState(new Date('2025-10-03')); // Mock current date
-  const [selectedCase, setSelectedCase] = useState<any | null>(null); // State to manage selected case for Case Files
-  const [selectedDetailTab, setSelectedDetailTab] = useState('Overview'); // State for tabs within case details
+  const { user, loading } = useAuth();
+  const [hasAccess, setHasAccess] = useState(false);
+  const [activeTab, setActiveTab] = useState('Daily Docket');
+  const [currentDate, setCurrentDate] = useState(new Date('2025-10-03'));
+  const [selectedCase, setSelectedCase] = useState<any | null>(null);
+  const [selectedDetailTab, setSelectedDetailTab] = useState('Overview');
 
   // States for Evidence Summary
   const [documentText, setDocumentText] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [generatedSummary, setGeneratedSummary] = useState<any | null>(null); // Changed to any for structured data
+  const [generatedSummary, setGeneratedSummary] = useState<any | null>(null);
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
 
   // States for Precedents
@@ -37,14 +41,35 @@ const JudgeDashboardPage: React.FC = () => {
   const [orderDraftText, setOrderDraftText] = useState('');
 
   useEffect(() => {
-    const userToken = localStorage.getItem('userToken');
-    const userRole = localStorage.getItem('userRole');
+    const checkAccess = async () => {
+      if (loading) return;
+      
+      if (!user) {
+        navigate('/login');
+        return;
+      }
 
-    // Redirect if not logged in or not a judge
-    if (!userToken || userRole !== 'judge') {
-      navigate('/login');
-    }
-  }, [navigate]);
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'judge')
+        .maybeSingle();
+
+      if (!roleData) {
+        navigate('/login');
+        return;
+      }
+
+      setHasAccess(true);
+    };
+
+    checkAccess();
+  }, [user, loading, navigate]);
+
+  if (loading || !hasAccess) {
+    return null;
+  }
 
   // Mock Data for KPI Cards
   const kpiData = {

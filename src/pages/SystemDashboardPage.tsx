@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate } from 'react-router-dom';
@@ -6,19 +6,44 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LayoutDashboard, Users, Clock, Database } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const SystemDashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
-    const userToken = localStorage.getItem('userToken');
-    const userRole = localStorage.getItem('userRole');
+    const checkAccess = async () => {
+      if (loading) return;
+      
+      if (!user) {
+        navigate('/login');
+        return;
+      }
 
-    // Redirect if not logged in or not a system user
-    if (!userToken || userRole !== 'system') {
-      navigate('/login');
-    }
-  }, [navigate]);
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'system')
+        .maybeSingle();
+
+      if (!roleData) {
+        navigate('/login');
+        return;
+      }
+
+      setHasAccess(true);
+    };
+
+    checkAccess();
+  }, [user, loading, navigate]);
+
+  if (loading || !hasAccess) {
+    return null;
+  }
 
   // Mock Data for KPI Cards
   const kpiData = {

@@ -6,23 +6,45 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, Users, Gavel, FileText, Clock } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const AdvocateDashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
+  const { user, loading } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
-    const userToken = localStorage.getItem('userToken');
-    const userRole = localStorage.getItem('userRole');
+    const checkAccess = async () => {
+      if (loading) return;
+      
+      if (!user) {
+        navigate('/login');
+        return;
+      }
 
-    // Redirect if not logged in or not an advocate
-    if (!userToken || userRole !== 'advocate') {
-      navigate('/login');
-    }
-    // In a real application, you'd have more granular role checking
-    // For example: if (userRole !== 'advocate') navigate('/unauthorized');
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'advocate')
+        .maybeSingle();
 
-  }, [navigate]);
+      if (!roleData) {
+        navigate('/login');
+        return;
+      }
+
+      setHasAccess(true);
+    };
+
+    checkAccess();
+  }, [user, loading, navigate]);
+
+  if (loading || !hasAccess) {
+    return null;
+  }
 
   // Mock Data for KPI Cards
   const kpiData = {

@@ -1,22 +1,48 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { BellRing, FileText, Hourglass, ShieldCheck, Paperclip } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const PoliceDashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
-    const userToken = localStorage.getItem('userToken');
-    const userRole = localStorage.getItem('userRole');
+    const checkAccess = async () => {
+      if (loading) return;
+      
+      if (!user) {
+        navigate('/login');
+        return;
+      }
 
-    if (!userToken || userRole !== 'police') {
-      navigate('/login');
-    }
-  }, [navigate]);
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'police')
+        .maybeSingle();
+
+      if (!roleData) {
+        navigate('/login');
+        return;
+      }
+
+      setHasAccess(true);
+    };
+
+    checkAccess();
+  }, [user, loading, navigate]);
+
+  if (loading || !hasAccess) {
+    return null;
+  }
 
   // Mock data for KPI Cards
   const kpiData = {
